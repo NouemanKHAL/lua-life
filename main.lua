@@ -1,16 +1,8 @@
 width, height = love.graphics.getWidth(), love.graphics.getHeight()
-square_size = 5
+square_size = 60
 w = width / square_size
 h = height / square_size
 generation = 0
-
-grid = {}
-for i = 1, w do
-	grid[i] = {}
-	for j = 1, h do
-		grid[i][j] = math.random(2) - 1
-	end
-end
 
 function count_neighbors(g, x, y)
 	coords = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 } }
@@ -57,18 +49,60 @@ function update()
 	generation = generation + 1
 end
 
-function love.draw()
-	love.window.setTitle("Generation :" .. generation)
+function draw_grid(g)
 	for i = 1, w do
 		for j = 1, h do
-			if grid[i][j] == 0 then
-				love.graphics.setColor(0, 0, 0)
-			else
-				love.graphics.setColor(255, 255, 255)
-			end
-			love.graphics.rectangle("fill", square_size * (i - 1), square_size * (j - 1), square_size, square_size)
+			draw_square(g, i, j)
 		end
 	end
+end
+
+function draw_square(g, x, y)
+	if g[x][y] == 0 then
+		love.graphics.setColor(0, 0, 0)
+	else
+		love.graphics.setColor(255, 255, 255)
+	end
+	love.graphics.rectangle("fill", square_size * x, square_size * y, square_size, square_size)
+end
+
+grid = {}
+for i = 1, w do
+	grid[i] = {}
+	for j = 1, h do
+		grid[i][j] = 0
+	end
+end
+
+love.graphics.setColor(255, 255, 255)
+love.graphics.setNewFont(14)
+love.graphics.print("click on the square to change their colors", 0, 0)
+
+state = false
+
+function love.draw()
+	if state == false then
+		event = love.event.wait()
+		if event == "keyreleased" then
+			state = true
+			goto continue
+		end
+		if event == "mousepressed" then
+			x = love.mouse.getX()
+			y = love.mouse.getY()
+			if x == nil or y == nil then
+				goto continue
+			end
+			pos_x = math.floor(x / square_size)
+			pos_y = math.floor(y / square_size)
+			grid[pos_x][pos_y] = 1
+		end
+		::continue::
+		draw_grid(grid)
+		return
+	end
+	draw_grid(grid)
 	update()
-	love.timer.sleep(1 / 60)
+	love.window.setTitle("Lua Life - Generation :" .. generation)
+	love.timer.sleep(1 / 5)
 end
