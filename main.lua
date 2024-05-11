@@ -1,8 +1,17 @@
 require("util")
 
+suit = require("suit")
+
+update_timer = coroutine.create(function()
+	while true do
+		love.timer.sleep(1 / (1 + slider.value))
+		coroutine.yield()
+	end
+end)
+
 function love.load()
-	love.window.setMode(990, 830)
-	width, height = love.graphics.getWidth(), love.graphics.getHeight()
+	love.window.setMode(960, 720)
+	width, height = 640, 640
 	square_size = 40
 	w = math.ceil(width / square_size)
 	h = math.ceil(height / square_size)
@@ -15,16 +24,35 @@ function love.load()
 		end
 	end
 	state = false
+	slider = { value = 50, min = 0, max = 100 }
+	coroutine.resume(update_timer)
+	counter = 0
+	love.window.setVSync(0)
 end
 
 function love.keyreleased()
 	state = true
 end
 
-function love.mousereleased()
+function love.mousepressed()
+	if suit.mouseInRect(700, 400, 200, 100) then
+		newGrid = {}
+		for i = 1, w do
+			newGrid[i] = {}
+			for j = 1, h do
+				newGrid[i][j] = 0
+			end
+		end
+		grid = newGrid
+		generation = 0
+		state = false
+	end
 	if state == false then
 		x, y = love.mouse.getPosition()
 		if x == nil or y == nil then
+			return
+		end
+		if x > width or y > height then
 			return
 		end
 		pos_x = math.floor(x / square_size) + 1
@@ -37,41 +65,26 @@ function love.mousereleased()
 end
 
 function love.update(dt)
+	fps = love.timer.getFPS()
+	suit.Slider(slider, 700, 600, 200, 20)
+	suit.Label(tostring(slider.value), 700, 570, 200, 40)
+	suit.Label("FPS: " .. tostring(fps), 700, 200, 200, 40)
+	speed_label = suit.Label("Speed", 700, 620, 200, 40)
+	reset_button = suit.Button("Reset", 700, 400, 200, 100)
 	if state == false then
 		return
 	end
-
-	-- prepare new grid to hold the new values
-	newGrid = {}
-	for i = 1, w do
-		newGrid[i] = {}
-		for j = 1, h do
-			newGrid[i][j] = 0
-		end
+	if coroutine.status(update_timer) == "suspended" then
+		update_generation(grid)
+		coroutine.resume(update_timer)
 	end
-
-	for i = 1, w do
-		for j = 1, h do
-			live_neighbors = count_neighbors(grid, i, j)
-			if grid[i][j] == 0 then
-				if live_neighbors == 3 then
-					newGrid[i][j] = 1
-				end
-			elseif grid[i][j] == 1 then
-				if live_neighbors == 2 or live_neighbors == 3 then
-					newGrid[i][j] = 1
-				end
-			end
-		end
-	end
-
-	grid = newGrid
-	generation = generation + 1
 end
 
 function love.draw()
 	draw_grid(grid)
 	draw_grid_lines()
+	love.graphics.setColor(255, 255, 255)
+	suit.draw()
 	love.window.setTitle("Lua Life - Generation :" .. generation)
-	love.timer.sleep(1 / 6)
+	counter = counter + 1
 end
