@@ -4,5 +4,5 @@ An implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conwa
 
 Just for fun :v:
 
-![game of life](https://i.imgur.com/HUF0BPc.png)
+![game of life](https://i.imgur.com/yPgQrMF.png)
 
