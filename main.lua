@@ -11,7 +11,7 @@ end)
 
 function love.load()
 	love.window.setMode(960, 720)
-	width, height = 640, 640
+	width, height = 960, 600
 	square_size = 40
 	w = math.ceil(width / square_size)
 	h = math.ceil(height / square_size)
@@ -35,7 +35,7 @@ function love.keyreleased()
 end
 
 function love.mousepressed()
-	if suit.mouseInRect(700, 400, 200, 100) then
+	if suit.mouseInRect(600, 630, 200, 50) then
 		newGrid = {}
 		for i = 1, w do
 			newGrid[i] = {}
@@ -65,12 +65,10 @@ function love.mousepressed()
 end
 
 function love.update(dt)
-	fps = love.timer.getFPS()
-	suit.Slider(slider, 700, 600, 200, 20)
-	suit.Label(tostring(slider.value), 700, 570, 200, 40)
-	suit.Label("FPS: " .. tostring(fps), 700, 200, 200, 40)
-	speed_label = suit.Label("Speed", 700, 620, 200, 40)
-	reset_button = suit.Button("Reset", 700, 400, 200, 100)
+	suit.Slider(slider, 250, 650, 200, 20)
+	suit.Label(tostring(slider.value), 250, 660, 200, 40)
+	speed_label = suit.Label("Speed", 250, 610, 200, 40)
+	reset_button = suit.Button("Reset", 600, 630, 200, 50)
 	if state == false then
 		return
 	end
