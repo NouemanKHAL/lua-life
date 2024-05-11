@@ -65,10 +65,12 @@ function love.mousepressed()
 end
 
 function love.update(dt)
-	suit.Slider(slider, 250, 650, 200, 20)
-	suit.Label(tostring(slider.value), 250, 660, 200, 40)
-	speed_label = suit.Label("Speed", 250, 610, 200, 40)
-	reset_button = suit.Button("Reset", 600, 630, 200, 50)
+	suit.Label("Mouse Click to Toggle a Cell", 30, 625, 230, 40)
+	suit.Label("Hit <Enter> to Start!", 30, 640, 230, 40)
+	suit.Slider(slider, 380, 650, 200, 20)
+	suit.Label(tostring(slider.value), 380, 660, 200, 40)
+	speed_label = suit.Label("Speed", 380, 610, 200, 40)
+	reset_button = suit.Button("Reset", 710, 630, 200, 50)
 	if state == false then
 		return
 	end
